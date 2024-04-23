@@ -1,6 +1,6 @@
 # `capitulation`
 <div id="badges">
-  <a href="https://linogaliana.fr">
+  <a href="https://www.insee.fr/fr/statistiques/6793990">
     <img src="https://img.shields.io/badge/See the Working Paper-red?style=for-the-badge&logo=firefox&logoColor=white" alt="Twitter Badge"/>
   </a>
 </div>
@@ -11,7 +11,7 @@ Experimental <img height="18" width="18" src="https://cdn.simpleicons.org/r/00cc
 for simulating capital accumulation in a longitudinal microsimulation
 framework. 
 
-See [Galiana and Wilner (2023)](https://www.insee.fr/fr/statistiques/6793990) and [Galiana, Guichaoua and Wilner](https://www.cairn.info/revue-retraite-et-societe-2022-2-page-17.htm) for more details on the framework and the dataset used. 
+See [Galiana and Wilner (2023)](https://www.insee.fr/fr/statistiques/6793990) and [Galiana, Guichaoua and Wilner (2022)](https://www.cairn.info/revue-retraite-et-societe-2022-2-page-17.htm) for more details on the framework and the dataset used. 
 
 ## Installation
 
