@@ -1,0 +1,1 @@
+testthat::context("plot_* functions produce required plot")

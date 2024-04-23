@@ -1,0 +1,10 @@
+^Meta$
+^doc$
+^revdep$
+^.*\.Rproj$
+^\.Rproj\.user$
+^inst/dataINSEE$
+^\.gitlab-ci\.yml$
+^\.gitlab-ci2\.yml$
+^data-raw$
+^LICENSE\.md$

@@ -1,0 +1,89 @@
+image: git-registry.stable.innovation.insee.eu/innovation/rstudio
+
+variables:
+  GIT_SSL_NO_VERIFY: "1"
+  _R_CHECK_CRAN_INCOMING_: "FALSE"
+  _R_CHECK_CRAN_INCOMING_: "FALSE"
+  _R_CHECK_FORCE_SUGGESTS_: "FALSE"
+  _R_CHECK_CRAN_INCOMING_USE_ASPELL_: "TRUE"
+  R_LIBS_USER: "$CI_PROJECT_DIR/ci/lib"
+  CHECK_DIR: "$CI_PROJECT_DIR/ci/logs"
+  BUILD_LOGS_DIR: "$CI_PROJECT_DIR/ci/logs/$CI_PROJECT_NAME.Rcheck"  
+  CXX1X: "g++"
+  CXX1XSTD: "-std=c++0x"
+  CFLAGS: "-Wall -pedantic -fdiagnostics-color=always"
+  CXXFLAGS: "-Wall -pedantic -fdiagnostics-color=always"
+  CXX11FLAGS: "-Wall -pedantic -fdiagnostics-color=always"
+
+
+stages:
+  - build
+  - test
+  - deploy
+  
+before_script:
+  - HTTPS_PROXY=http://proxy-rie.http.insee.fr:8080/ git submodule sync --recursive
+  - HTTPS_PROXY=http://proxy-rie.http.insee.fr:8080/ git submodule update --init --recursive
+  - Rscript -e "install.packages('RcppEigen')"
+  - Rscript -e "pkgbuild::clean_dll('.')"
+  - Rscript -e "install.packages(c('lme4','pbkrtest','car','sampleSelection'), dependencies = TRUE)"
+  - Rscript -e "devtools::install_git('https://git.stable.innovation.insee.eu/microsimulation/retage', dependencies = TRUE)"
+  - Rscript -e "devtools::install_deps('.')"
+  - Rscript -e 'devtools::document()'
+
+
+building:
+  stage: build
+  script:
+    - R -e 'devtools::install()'
+
+checking:
+  allow_failure: true
+  stage: build
+  script:
+    - R -e 'devtools::check()'
+
+buildchild:
+  stage: build
+  allow_failure: true
+  script:
+    - R -e 'devtools::install()'
+    - git clone "https://git.stable.innovation.insee.eu/microsimulation/wealthyr.git"
+    - Rscript -e "devtools::install_deps('wealthyr')"
+    - Rscript -e "devtools::check('wealthyr')"
+
+
+# To have the coverage percentage appear as a gitlab badge follow these
+# instructions:
+# https://docs.gitlab.com/ee/user/project/pipelines/settings.html#test-coverage-parsing
+# The coverage parsing string is
+# Coverage: \d+\.\d+
+
+testing:
+    stage: test
+    allow_failure: true
+    when: on_success
+    only:
+        - master
+    script:
+        - Rscript -e 'install.packages("DT")'
+        - Rscript -e 'covr::gitlab(quiet = FALSE)'
+    artifacts:
+        paths:
+            - public
+
+# To produce a code coverage report as a GitLab page see
+# https://about.gitlab.com/2016/11/03/publish-code-coverage-report-with-gitlab-pages/
+
+pages:
+    stage: deploy
+    dependencies:
+        - testing
+    script:
+        - ls
+    artifacts:
+        paths:
+            - public
+        expire_in: 30 days
+    only:
+        - master
